@@ -1,0 +1,25 @@
+image: java:8
+
+variables:
+    GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+    TERM: "dumb"
+
+before_script:
+    - chmod +x gradlew
+
+stages:
+  - build
+
+build:
+  stage: build
+  before_script:
+    - export JADX_LAST_TAG="$(git describe --abbrev=0 --tags)"
+    - export JADX_VERSION="${JADX_LAST_TAG:1}-$(git rev-parse --short HEAD)"
+  script:
+    - ./gradlew -g /cache/.gradle clean build jacocoTestReport
+    - ./gradlew -g /cache/.gradle clean sonarqube -Dsonar.host.url=$SONAR_HOST -Dsonar.organization=$SONAR_ORG -Dsonar.login=$SONAR_TOKEN
+    - ./gradlew -g /cache/.gradle clean dist
+  artifacts:
+    paths:
+    - build/jadx*.zip
+    - build/jadx*.exe

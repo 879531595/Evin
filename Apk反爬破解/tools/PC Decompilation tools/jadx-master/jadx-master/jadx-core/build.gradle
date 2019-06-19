@@ -1,0 +1,17 @@
+ext.jadxClasspath = 'clsp-data/android-5.1.jar'
+
+dependencies {
+    runtime files(jadxClasspath)
+
+    compile files('lib/dx-1.14.jar')
+    compile 'commons-io:commons-io:2.6'
+    compile 'org.ow2.asm:asm:6.2'
+    compile 'org.jetbrains:annotations:16.0.2'
+    compile 'uk.com.robust-it:cloning:1.9.10'
+
+    testCompile 'org.smali:smali:2.2.4'
+    testCompile 'org.smali:baksmali:2.2.4'
+
+    testCompile 'org.apache.commons:commons-lang3:3.7'
+}
+

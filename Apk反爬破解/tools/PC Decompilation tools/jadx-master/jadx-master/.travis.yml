@@ -1,0 +1,55 @@
+language: java
+sudo: false
+dist: trusty
+
+# don't build on tag push
+if: tag IS blank
+
+git:
+  depth: false
+
+before_install:
+  - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
+  - chmod +x gradlew
+
+# override install to skip 'gradle assemble'
+install:
+  - true
+
+env:
+  global:
+    - TERM=dumb
+    - JADX_LAST_TAG=$(git describe --abbrev=0 --tags)
+    - JADX_VERSION="${JADX_LAST_TAG:1}-b$TRAVIS_BUILD_NUMBER-$(git rev-parse --short HEAD)"
+
+matrix:
+  include:
+    - env: JDK=oracle-8
+      jdk: oraclejdk8
+    - env: JDK=oracle-10
+      install: . ./install-jdk.sh -F 10 -L BCL
+
+script:
+  - java -version
+  - ./gradlew clean build
+
+deploy:
+  - provider: script
+    skip_cleanup: true
+    on:
+      branch: master
+      tags: false
+      condition: $JDK = oracle-8
+    script: bash scripts/travis-master.sh
+
+  - provider: script
+    skip_cleanup: true
+    on:
+      branch: release
+      tags: false
+      condition: $JDK = oracle-8
+    script: bash scripts/travis-release.sh
+
+notifications:
+  email:
+    - skylot@gmail.com

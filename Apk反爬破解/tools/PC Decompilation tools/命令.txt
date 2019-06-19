@@ -1,0 +1,1 @@
+java -jar apktool_2.0.1.jar d -f E:\AndroidDevelopTool\Android反编译工具包\测试apk\MMTS-release-1.0.2.apk -o MMTS
